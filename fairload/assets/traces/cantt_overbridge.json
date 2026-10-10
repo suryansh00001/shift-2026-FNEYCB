@@ -1,0 +1,25 @@
+{
+  "route_id": "vns_cantt_02",
+  "name": "Cantt Railway Overbridge",
+  "description": "Heavy mixed-traffic railway overbridge connecting Lahartara to Englishia Line. Sustained 3.8% grade with persistent auto-rickshaw crawl.",
+  "length_meters": 1850.0,
+  "duration_seconds": 210,
+  "default_ambient_temp": 39.0,
+  "points": [
+    { "time_s": 0, "dist_m": 0, "elev_m": 75.5, "grade_pct": 0.1, "speed_kmh": 20.0, "stage": "Lahartara Dark Store" },
+    { "time_s": 15, "dist_m": 80, "elev_m": 75.7, "grade_pct": 0.5, "speed_kmh": 19.0, "stage": "Cantt Station Road" },
+    { "time_s": 30, "dist_m": 155, "elev_m": 76.5, "grade_pct": 1.8, "speed_kmh": 16.0, "stage": "Overbridge Approach Ramp" },
+    { "time_s": 45, "dist_m": 215, "elev_m": 78.2, "grade_pct": 3.2, "speed_kmh": 12.5, "stage": "Main Overbridge Climb" },
+    { "time_s": 60, "dist_m": 260, "elev_m": 79.9, "grade_pct": 3.8, "speed_kmh": 9.5, "stage": "Sustained Grade - High Load" },
+    { "time_s": 75, "dist_m": 298, "elev_m": 81.3, "grade_pct": 3.9, "speed_kmh": 8.8, "stage": "Sustained Grade - Rail Tracks Span" },
+    { "time_s": 90, "dist_m": 334, "elev_m": 82.6, "grade_pct": 3.7, "speed_kmh": 8.5, "stage": "Mid-Span Thermal Accumulation" },
+    { "time_s": 105, "dist_m": 372, "elev_m": 83.8, "grade_pct": 3.4, "speed_kmh": 9.2, "stage": "Upper Bridge Span" },
+    { "time_s": 120, "dist_m": 415, "elev_m": 84.6, "grade_pct": 2.2, "speed_kmh": 11.5, "stage": "Approaching Englishia Crest" },
+    { "time_s": 135, "dist_m": 468, "elev_m": 85.0, "grade_pct": 0.5, "speed_kmh": 15.0, "stage": "Bridge Crest" },
+    { "time_s": 150, "dist_m": 535, "elev_m": 84.1, "grade_pct": -1.8, "speed_kmh": 21.0, "stage": "North Descent Begins" },
+    { "time_s": 165, "dist_m": 615, "elev_m": 81.5, "grade_pct": -3.2, "speed_kmh": 25.0, "stage": "Descent Slope" },
+    { "time_s": 180, "dist_m": 705, "elev_m": 78.2, "grade_pct": -2.8, "speed_kmh": 26.0, "stage": "Englishia Line Ramp Foot" },
+    { "time_s": 195, "dist_m": 795, "elev_m": 76.0, "grade_pct": -0.8, "speed_kmh": 22.0, "stage": "Englishia Line Junction" },
+    { "time_s": 210, "dist_m": 880, "elev_m": 75.8, "grade_pct": 0.0, "speed_kmh": 20.0, "stage": "Delivery Destination Drop" }
+  ]
+}

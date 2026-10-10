@@ -1,0 +1,25 @@
+{
+  "route_id": "vns_lanka_03",
+  "name": "Lanka Dark Store to Assi Gallis",
+  "description": "Dense urban corridor near BHU Main Gate and narrow gallis. Flat terrain with severe stop-and-go acceleration spikes causing high inrush current.",
+  "length_meters": 1100.0,
+  "duration_seconds": 150,
+  "default_ambient_temp": 38.0,
+  "points": [
+    { "time_s": 0, "dist_m": 0, "elev_m": 77.0, "grade_pct": 0.0, "speed_kmh": 0.0, "stage": "Lanka Dark Store Pickup" },
+    { "time_s": 10, "dist_m": 25, "elev_m": 77.0, "grade_pct": 0.0, "speed_kmh": 16.0, "stage": "Hard Acceleration 1" },
+    { "time_s": 20, "dist_m": 70, "elev_m": 77.1, "grade_pct": 0.1, "speed_kmh": 18.0, "stage": "BHU Gate Traffic" },
+    { "time_s": 30, "dist_m": 95, "elev_m": 77.1, "grade_pct": 0.0, "speed_kmh": 2.0, "stage": "Pedestrian Pinch Point - Stop" },
+    { "time_s": 40, "dist_m": 120, "elev_m": 77.0, "grade_pct": 0.0, "speed_kmh": 15.0, "stage": "Hard Restart Inrush 2" },
+    { "time_s": 50, "dist_m": 170, "elev_m": 77.2, "grade_pct": 0.2, "speed_kmh": 19.0, "stage": "Ravindrapuri Road" },
+    { "time_s": 60, "dist_m": 220, "elev_m": 77.1, "grade_pct": -0.1, "speed_kmh": 19.5, "stage": "Cruising Corridor" },
+    { "time_s": 70, "dist_m": 240, "elev_m": 77.1, "grade_pct": 0.0, "speed_kmh": 0.0, "stage": "Cow Obstruction - Dead Stop" },
+    { "time_s": 80, "dist_m": 265, "elev_m": 77.1, "grade_pct": 0.0, "speed_kmh": 14.0, "stage": "Restart Under Full 140kg Load" },
+    { "time_s": 90, "dist_m": 310, "elev_m": 77.3, "grade_pct": 0.3, "speed_kmh": 17.0, "stage": "Entering Assi Gallis" },
+    { "time_s": 100, "dist_m": 350, "elev_m": 77.2, "grade_pct": -0.1, "speed_kmh": 12.0, "stage": "Narrow Potholed Galli" },
+    { "time_s": 110, "dist_m": 380, "elev_m": 77.1, "grade_pct": 0.0, "speed_kmh": 6.0, "stage": "Sharp 90-degree Corner" },
+    { "time_s": 120, "dist_m": 420, "elev_m": 77.1, "grade_pct": 0.0, "speed_kmh": 15.0, "stage": "Final Galli Straight" },
+    { "time_s": 130, "dist_m": 470, "elev_m": 77.0, "grade_pct": 0.0, "speed_kmh": 16.0, "stage": "Assi Ghat Approach" },
+    { "time_s": 150, "dist_m": 530, "elev_m": 77.0, "grade_pct": 0.0, "speed_kmh": 0.0, "stage": "Order Delivered - Assi Ghat" }
+  ]
+}

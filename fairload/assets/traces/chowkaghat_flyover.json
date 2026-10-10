@@ -1,0 +1,29 @@
+{
+  "route_id": "vns_chowkaghat_01",
+  "name": "Chowkaghat Flyover Ascent",
+  "description": "Critical freight corridor connecting Cantt Junction to Rajghat. Steep 4.2% ramp where overloaded quick-commerce bikes experience power-limiting stall.",
+  "length_meters": 1420.0,
+  "duration_seconds": 180,
+  "default_ambient_temp": 40.5,
+  "points": [
+    { "time_s": 0, "dist_m": 0, "elev_m": 76.0, "grade_pct": 0.2, "speed_kmh": 22.0, "stage": "Dark Store Dispatch" },
+    { "time_s": 10, "dist_m": 58, "elev_m": 76.1, "grade_pct": 0.4, "speed_kmh": 21.5, "stage": "GT Road Traffic" },
+    { "time_s": 20, "dist_m": 115, "elev_m": 76.3, "grade_pct": 0.8, "speed_kmh": 20.0, "stage": "Approaching Flyover Ramp" },
+    { "time_s": 30, "dist_m": 168, "elev_m": 77.2, "grade_pct": 2.1, "speed_kmh": 17.5, "stage": "Ramp Foot - Incline Begins" },
+    { "time_s": 40, "dist_m": 212, "elev_m": 78.8, "grade_pct": 3.6, "speed_kmh": 14.0, "stage": "Main Incline Ascent" },
+    { "time_s": 50, "dist_m": 248, "elev_m": 80.4, "grade_pct": 4.2, "speed_kmh": 10.5, "stage": "Ascent - Low-RPM High Torque" },
+    { "time_s": 60, "dist_m": 278, "elev_m": 81.9, "grade_pct": 4.4, "speed_kmh": 8.8, "stage": "Ascent - Power-Limiting Stall" },
+    { "time_s": 70, "dist_m": 305, "elev_m": 83.2, "grade_pct": 4.5, "speed_kmh": 8.2, "stage": "Ascent - Peak Thermal Surge" },
+    { "time_s": 80, "dist_m": 331, "elev_m": 84.5, "grade_pct": 4.4, "speed_kmh": 8.0, "stage": "Ascent - Sustained Peak Power" },
+    { "time_s": 90, "dist_m": 358, "elev_m": 85.8, "grade_pct": 4.3, "speed_kmh": 8.1, "stage": "Ascent - Plating Danger Zone" },
+    { "time_s": 100, "dist_m": 386, "elev_m": 87.0, "grade_pct": 4.0, "speed_kmh": 8.5, "stage": "Upper Flyover Section" },
+    { "time_s": 110, "dist_m": 418, "elev_m": 88.0, "grade_pct": 3.1, "speed_kmh": 10.2, "stage": "Approaching Crest" },
+    { "time_s": 120, "dist_m": 456, "elev_m": 88.6, "grade_pct": 1.5, "speed_kmh": 13.5, "stage": "Flyover Crest Center" },
+    { "time_s": 130, "dist_m": 505, "elev_m": 88.8, "grade_pct": 0.2, "speed_kmh": 18.0, "stage": "Crest Plateau" },
+    { "time_s": 140, "dist_m": 568, "elev_m": 87.8, "grade_pct": -2.2, "speed_kmh": 23.0, "stage": "Descent - Thermal Relief" },
+    { "time_s": 150, "dist_m": 642, "elev_m": 85.2, "grade_pct": -3.8, "speed_kmh": 26.5, "stage": "Descent Ramp" },
+    { "time_s": 160, "dist_m": 725, "elev_m": 81.5, "grade_pct": -4.0, "speed_kmh": 28.0, "stage": "Descent Ramp" },
+    { "time_s": 170, "dist_m": 810, "elev_m": 77.5, "grade_pct": -1.5, "speed_kmh": 24.0, "stage": "Ramp Foot North" },
+    { "time_s": 180, "dist_m": 890, "elev_m": 76.2, "grade_pct": 0.1, "speed_kmh": 20.0, "stage": "Cantt Junction Approach" }
+  ]
+}
