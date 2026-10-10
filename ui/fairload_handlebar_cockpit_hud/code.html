@@ -152,7 +152,12 @@
       100% { transform: translateX(200%); }
     }
   </style>
-</head>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
 <body class="bg-[#07080B] text-on-surface antialiased selection:bg-primary-container selection:text-surface-container-lowest flex justify-center min-h-screen">
 <!-- Mobile Mount Canvas: 390px locked handlebar viewport -->
 <main class="w-[390px] min-h-screen relative flex flex-col justify-between hud-bg-grid border-x border-white/5 pb-20 shadow-2xl">
