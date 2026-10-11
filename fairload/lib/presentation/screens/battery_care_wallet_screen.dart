@@ -218,7 +218,7 @@ class _BatteryCareWalletScreenState extends State<BatteryCareWalletScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Funded 100% by the dark-store platform from avoided pack replacement savings. Never deducted from delivery earnings. Redeemable for verified battery servicing.',
+                  'Funded 100% by the dark-store platform from saved recruiting new rider costs and avoided pack replacement savings. Never deducted from delivery earnings. Protects take-home pay, eliminates rider turnover, and redeemable for verified battery servicing.',
                   style: AppTheme.bodySmall.copyWith(color: AppTheme.textMuted, fontSize: 11),
                 ),
               ],
