@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fairload/core/constants/battery_specs.dart';
 import 'package:fairload/core/constants/dispatch_demo_data.dart';
-import 'package:fairload/core/constants/vehicle_specs.dart';
 import 'package:fairload/core/models/dispatch_models.dart';
 import 'package:fairload/engine/battery_care_ledger.dart';
 import 'package:fairload/engine/dispatch_optimizer.dart';

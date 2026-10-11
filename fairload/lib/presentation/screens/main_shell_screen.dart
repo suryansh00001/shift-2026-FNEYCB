@@ -11,6 +11,7 @@ import 'defense_slip_screen.dart';
 import 'dispatch_comparison_screen.dart';
 import 'fleet_sustainability_screen.dart';
 import 'hud_screen.dart';
+import 'pre_trip_prognosis_screen.dart';
 import 'shift_ledger_screen.dart';
 import 'simulator_screen.dart';
 
@@ -45,6 +46,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
       defaultSlip != null
           ? DefenseSlipScreen(slipData: defaultSlip)
           : const _EmptyDisputePlaceholder(),
+      const PreTripPrognosisScreen(),
     ];
 
     final List<Widget> fleetScreens = [
@@ -52,6 +54,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
       DispatchComparisonScreen(comparison: defaultComparison),
       const BatteryCareWalletScreen(),
       const FleetSustainabilityScreen(),
+      const PreTripPrognosisScreen(),
     ];
 
     final activeScreens = _isFleetHubMode ? fleetScreens : riderScreens;
@@ -205,6 +208,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         _buildNavItem(1, "BATTERY", Icons.battery_charging_full, AppTheme.primaryMint),
         _buildNavItem(2, "PAYLOAD", Icons.inventory_2_outlined, AppTheme.primaryMint),
         _buildNavItem(3, "DISPUTE", Icons.shield_outlined, AppTheme.primaryMint),
+        _buildNavItem(4, "PROGNOSIS", Icons.satellite_alt_outlined, AppTheme.primaryMint),
       ],
     );
   }
@@ -216,6 +220,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         _buildNavItem(1, "COMPARE", Icons.compare_arrows, AppTheme.cyan),
         _buildNavItem(2, "WALLET", Icons.account_balance_wallet_outlined, AppTheme.cyan),
         _buildNavItem(3, "FLEET ESG", Icons.analytics_outlined, AppTheme.cyan),
+        _buildNavItem(4, "PROGNOSIS", Icons.satellite_alt_outlined, AppTheme.cyan),
       ],
     );
   }
