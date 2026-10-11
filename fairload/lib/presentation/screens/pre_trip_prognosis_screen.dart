@@ -47,6 +47,12 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
   }
 
   @override
+  void reassemble() {
+    super.reassemble();
+    _recalculatePrognosis();
+  }
+
+  @override
   void dispose() {
     _startLatCtrl.dispose();
     _startLonCtrl.dispose();
@@ -155,7 +161,7 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
                 if (_prognosis != null) ...[
                   _buildPinnKneePrognosisCard(),
                   const SizedBox(height: 12),
-                  _buildWmgElectrochemicalStressCard(),
+                  _buildWangAgingKineticsCard(),
                   const SizedBox(height: 12),
                   _buildMitigationActionCard(),
                   const SizedBox(height: 20),
@@ -769,37 +775,26 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('${_plannedSpeedKmh.toStringAsFixed(1)} km/h', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                          Text(
+                            '${_plannedSpeedKmh.toStringAsFixed(1)} km/h',
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
                           Row(
                             children: [
                               InkWell(
                                 onTap: () {
-                                  setState(() => _plannedSpeedKmh = 8.2);
+                                  setState(() => _plannedSpeedKmh = math.max(4.0, _plannedSpeedKmh - 1.0));
                                   _recalculatePrognosis();
                                 },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: _plannedSpeedKmh == 8.2 ? AppTheme.primaryMint.withValues(alpha: 0.2) : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text('8.2', style: TextStyle(fontSize: 8.5, color: _plannedSpeedKmh == 8.2 ? AppTheme.primaryMint : AppTheme.textMuted)),
-                                ),
+                                child: const Icon(Icons.remove_circle_outline, size: 15, color: AppTheme.textMuted),
                               ),
-                              const SizedBox(width: 3),
+                              const SizedBox(width: 6),
                               InkWell(
                                 onTap: () {
-                                  setState(() => _plannedSpeedKmh = 16.0);
+                                  setState(() => _plannedSpeedKmh = math.min(35.0, _plannedSpeedKmh + 1.0));
                                   _recalculatePrognosis();
                                 },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: _plannedSpeedKmh == 16.0 ? AppTheme.hudCrimson.withValues(alpha: 0.2) : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text('16', style: TextStyle(fontSize: 8.5, color: _plannedSpeedKmh == 16.0 ? AppTheme.hudCrimson : AppTheme.textMuted)),
-                                ),
+                                child: const Icon(Icons.add_circle_outline, size: 15, color: AppTheme.primaryMint),
                               ),
                             ],
                           ),
@@ -809,6 +804,20 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
                   ],
                 ),
               ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          // Speed Preset Chips (Tactical / Operating Regimes)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildSpeedChip(8.2, '8.2 Crawl'),
+              _buildSpeedChip(12.0, '12 Hill'),
+              _buildSpeedChip(16.0, '16 City'),
+              _buildSpeedChip(22.0, '22 Cruise'),
+              _buildSpeedChip(25.0, '25 SLA'),
             ],
           ),
 
@@ -1050,6 +1059,32 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
     );
   }
 
+  Widget _buildSpeedChip(double speed, String label) {
+    final isCur = (_plannedSpeedKmh - speed).abs() < 0.4;
+    return InkWell(
+      onTap: () {
+        setState(() => _plannedSpeedKmh = speed);
+        _recalculatePrognosis();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        decoration: BoxDecoration(
+          color: isCur ? AppTheme.primaryMint.withValues(alpha: 0.15) : AppTheme.surfaceMid,
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: isCur ? AppTheme.primaryMint : AppTheme.borderLight),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isCur ? AppTheme.primaryMint : AppTheme.textMuted,
+            fontSize: 8.0,
+            fontWeight: isCur ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
   // ============================================================================
   // PINN SOH & KNEE-POINT PROGNOSIS CARD
   // ============================================================================
@@ -1153,9 +1188,9 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
   }
 
   // ============================================================================
-  // WMG ELECTROCHEMICAL STRESS CARD
+  // WANG (2011) AGING KINETICS CARD
   // ============================================================================
-  Widget _buildWmgElectrochemicalStressCard() {
+  Widget _buildWangAgingKineticsCard() {
     final p = _prognosis!;
 
     return Container(
@@ -1172,7 +1207,7 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'WARWICK (WMG) STRESS MODEL',
+                  'WANG (2011) AGING KINETICS',
                   style: AppTheme.labelCaps.copyWith(
                     color: AppTheme.hudAmber,
                     fontSize: 9.5,
@@ -1183,7 +1218,7 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
               ),
               const SizedBox(width: 6),
               Text(
-                'W_f: ${p.totalStressMultiplierWf.toStringAsFixed(2)}×',
+                'Ah: ${p.ahThroughputAh.toStringAsFixed(2)} Ah',
                 style: const TextStyle(
                   color: AppTheme.primaryMint,
                   fontSize: 10.5,
@@ -1199,26 +1234,26 @@ class _PreTripPrognosisScreenState extends State<PreTripPrognosisScreen> {
                 child: _buildStressFactorBox(
                   'Arrhenius Φ_T',
                   '${p.arrheniusFactorPhiT.toStringAsFixed(2)}×',
-                  'Thermal aging',
+                  'Thermal aging (Kučinskis)',
                   p.arrheniusFactorPhiT > 3.0 ? AppTheme.hudCrimson : AppTheme.hudAmber,
                 ),
               ),
               const SizedBox(width: 5),
               Expanded(
                 child: _buildStressFactorBox(
-                  'Overpotential Ψ_C',
-                  '${p.cRateOverpotentialFactorPsiC.toStringAsFixed(2)}×',
-                  'High C-rate polarization',
-                  p.cRateOverpotentialFactorPsiC > 1.5 ? AppTheme.hudCrimson : AppTheme.cyan,
+                  'Wang B(C)',
+                  '${p.bFactorWang.toInt()}',
+                  'Table 2 @ ${p.dischargeCRate.toStringAsFixed(1)}C',
+                  AppTheme.cyan,
                 ),
               ),
               const SizedBox(width: 5),
               Expanded(
                 child: _buildStressFactorBox(
-                  'Li Plating Factor',
-                  '${p.lithiumPlatingMultiplier.toStringAsFixed(1)}×',
-                  p.hasLithiumPlatingRisk ? 'Active Plating' : 'Benign regime',
-                  p.hasLithiumPlatingRisk ? AppTheme.hudCrimson : AppTheme.primaryMint,
+                  'Capacity Lost',
+                  '${p.capacityLostMah.toStringAsFixed(1)} mAh',
+                  '${p.predictedTripSohLossPct.toStringAsFixed(3)}% SOH fade',
+                  p.capacityLostMah > 50.0 ? AppTheme.hudCrimson : AppTheme.primaryMint,
                 ),
               ),
             ],

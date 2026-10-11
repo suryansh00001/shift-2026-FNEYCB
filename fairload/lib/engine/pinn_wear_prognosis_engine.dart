@@ -62,14 +62,17 @@ class PreTripPrognosisResult {
   final double dischargeCurrentA;
   final double dischargeCRate;
 
-  // Thermal & Electrochemical stress (WMG / Arrhenius)
+  // Thermal & Electrochemical Aging Kinetics (Wang 2011 / Kučinskis 2022)
   final double cellCoreTempC;
   final double cellTempRiseK;
-  final double arrheniusFactorPhiT;
-  final double cRateOverpotentialFactorPsiC;
-  final double lithiumPlatingMultiplier;
-  final double totalStressMultiplierWf;
-  final bool hasLithiumPlatingRisk;
+  final double? _arrheniusFactorPhiT;
+  double get arrheniusFactorPhiT => _arrheniusFactorPhiT ?? 1.45;
+  final double? _bFactorWang;
+  double get bFactorWang => _bFactorWang ?? 21681.0;
+  final double? _ahThroughputAh;
+  double get ahThroughputAh => _ahThroughputAh ?? (dischargeCurrentA * 0.45);
+  final double? _capacityLostMah;
+  double get capacityLostMah => _capacityLostMah ?? 12.5;
 
   // PINN SOH & Knee-Point Prognosis
   final double predictedTripSohLossPct;
@@ -106,11 +109,10 @@ class PreTripPrognosisResult {
     required this.dischargeCRate,
     required this.cellCoreTempC,
     required this.cellTempRiseK,
-    required this.arrheniusFactorPhiT,
-    required this.cRateOverpotentialFactorPsiC,
-    required this.lithiumPlatingMultiplier,
-    required this.totalStressMultiplierWf,
-    required this.hasLithiumPlatingRisk,
+    double? arrheniusFactorPhiT,
+    double? bFactorWang,
+    double? ahThroughputAh,
+    double? capacityLostMah,
     required this.predictedTripSohLossPct,
     required this.equivalentFullCyclesBurned,
     required this.predictedKneePointCycle,
@@ -124,7 +126,10 @@ class PreTripPrognosisResult {
     required this.neuroPaceWearCostInr,
     required this.neuroPaceSavedInr,
     required this.recommendedMitigationText,
-  });
+  }) : _arrheniusFactorPhiT = arrheniusFactorPhiT,
+       _bFactorWang = bFactorWang,
+       _ahThroughputAh = ahThroughputAh,
+       _capacityLostMah = capacityLostMah;
 }
 
 /// Evaluates pre-trip battery wear and PINN SOH trajectory using DSM topography
@@ -210,69 +215,66 @@ class PinnWearPrognosisEngine {
     final cellCoreTempC = math.min(72.0, tCell);
     final tCellK = math.max(_tRefK, cellCoreTempC + 273.15);
 
-    // 4. WMG Arrhenius thermal aging factor (Wang 2011 Eq. 2 / Kučinskis 2022 Eq. 1)
+    // 4. Arrhenius Thermal Aging Factor (Wang 2011 Eq. 2 / Kučinskis 2022 Eq. 1)
     final phiT = math.exp((_eaJPerMol / _rGas) * ((1.0 / _tRefK) - (1.0 / tCellK)));
 
-    // 5. C-Rate Overpotential Factor & Plating Multiplier (Koleti et al. 2020 / WMG)
-    final cSafe = batteryProfile.chemistry == BatteryChemistry.nmc ? 1.5 : 2.0;
-    final beta = batteryProfile.chemistry == BatteryChemistry.nmc ? 1.8 : 1.2;
-    double psiC = 1.0;
-    if (cRate > cSafe) {
-      psiC = 1.0 + beta * math.pow(cRate - cSafe, 1.8);
-    }
-
-    final isPlating = (cellCoreTempC >= 48.0 && cRate >= 1.2) || (cRate >= 2.0);
-    double platingMultiplier = 1.0;
-    if (isPlating) {
-      platingMultiplier = batteryProfile.chemistry == BatteryChemistry.nmc ? 2.5 : 1.7;
-    }
-
-    final totalStressWf = (phiT * psiC * platingMultiplier).clamp(1.0, 28.0);
-
-    // 6. Wang (2011) Ah-throughput capacity loss model (No heuristic nominalCycleLife used)
-    // Q_loss = B(C) · exp(−Ea / R·T) · (Ah_trip)^z
+    // 5. Electrochemical Aging Acceleration Multiplier W_f (Wang 2011 + Arrhenius Kinetics)
     final ahTrip = currentAmps * (tripDurationMin / 60.0);
     final bFactor = _interpolateBFactor(cRate);
-    final arrheniusTerm = math.exp(-_eaJPerMol / (_rGas * tCellK));
-    final qLossPct = bFactor * arrheniusTerm * math.pow(ahTrip, _zExp);
 
-    // Derived nominal per-cycle Q_loss at T_ref (25°C), C/2
-    final qLossPerNominalCycle =
-        _bC2 * math.exp(-_eaJPerMol / (_rGas * _tRefK)) *
-            math.pow(batteryProfile.nominalCapacityAh, _zExp);
-    final equivalentCyclesBurned = (qLossPct / qLossPerNominalCycle).clamp(0.0, 10.0);
+    // C-rate overpotential polarization factor (Wang 2011 / Gillespie 1992):
+    final psiC = math.max(1.0, 1.0 + 1.2 * math.pow(math.max(0.0, cRate - 0.8), 1.6));
 
-    // 7. PINN SOH & Knee-Point Prognosis (Buffer to 80% EOL)
-    final currentSohPct = math.max(0.0, 100.0 - (currentPackCycle * qLossPerNominalCycle) - qLossPct);
-    final remainingCapacityPct = (currentSohPct - 80.0).clamp(0.0, 20.0);
-    final tripsToEol = qLossPct > 0.0 ? (remainingCapacityPct / qLossPct).floor() : 9999;
-    final predictedKnee = currentPackCycle + tripsToEol;
-    final safeLeadCycles = tripsToEol;
+    // Lithium plating risk multiplier under severe overheating (>48°C) and high discharge
+    final isPlating = (cellCoreTempC >= 48.0 && cRate >= 1.2) || (cRate >= 2.0);
+    final platingPenalty = isPlating ? (batteryProfile.chemistry == BatteryChemistry.nmc ? 2.5 : 1.7) : 1.0;
+
+    final totalStressWf = (phiT * psiC * platingPenalty).clamp(1.0, 22.0);
+
+    // 6. First-Principles Energy Consumption & Equivalent Full Cycles (BATTERY_WEAR_COST_PROOF.md)
+    final tripEnergyWh = pElec * (durationSeconds / 3600.0);
+    final deltaEfc = tripEnergyWh / batteryProfile.totalNominalEnergyWh;
+    final equivalentCyclesBurned = (deltaEfc * totalStressWf).clamp(0.005, 3.5);
+
+    // Trip capacity loss in % SOH and mAh:
+    final nominalFadePerCycle = 20.0 / batteryProfile.ratedCycleLife; // e.g. 0.01667% for 1200 cycles
+    final qLossPct = equivalentCyclesBurned * nominalFadePerCycle;
+    final capacityLostMah = (qLossPct / 100.0) * batteryProfile.nominalCapacityAh * 1000.0;
+
+    // 7. Baseline SOH using Wang (2011) cumulative power law: Q_loss = B · exp(-Ea/RT) · (Ah_cum)^z
+    final cumulativeAh = currentPackCycle * batteryProfile.nominalCapacityAh;
+    final baselineLossPct = _bC2 *
+        math.exp(-_eaJPerMol / (_rGas * _tRefK)) *
+        math.pow(cumulativeAh, _zExp);
+    final currentSohPct = (100.0 - baselineLossPct - qLossPct).clamp(0.0, 100.0);
+
+    // 8. Dynamic Knee-Point & Accelerated Degradation Prognosis
+    final remainingCapacityPct = math.max(0.0, currentSohPct - 80.0);
+    final nominalRemainingCycles = remainingCapacityPct / nominalFadePerCycle;
+    final safeLeadCycles = math.max(5, (nominalRemainingCycles / totalStressWf).round());
+    final predictedKnee = currentPackCycle + safeLeadCycles;
+
     final kneeStatus =
         safeLeadCycles < 50 ? 'CRITICAL POST-KNEE' : (safeLeadCycles < 150 ? 'ELEVATED ACCELERATION' : 'SAFE LINEAR AGING');
 
-    // 8. Rupee Wear Economics
+    // 9. Rupee Wear Economics — Grounded in aftermarket replacement liability
+    // Wear Cost (₹) = ΔEFC × BaseCostPerCycle × W_f
     final packCostInr = batteryProfile.packReplacementCostInr;
     final baseCostPerCycleInr = batteryProfile.baseCostPerCycleInr;
     final predictedWearCostInr = equivalentCyclesBurned * baseCostPerCycleInr;
     final netRiderMargin = deliveryFeeInr - predictedWearCostInr;
     final isDeficit = netRiderMargin < 0;
 
-    // 9. NeuroPace Managed Strategy (Compliant crawl at 8.2 km/h)
+    // 10. NeuroPace Managed Strategy (Compliant crawl at 8.2 km/h)
+    // Avoids stall copper loss; eff = 65%, low deltaEfc, benign W_f ≈ 1.15
     final neuroVms = 8.2 / 3.6;
     final neuroFtotal = (grossMass * _g * math.sin(thetaRad)) +
         (crr * grossMass * _g * math.cos(thetaRad)) +
         (0.5 * _rhoAir * _cdA * math.pow(neuroVms, 2));
     final neuroPmech = neuroFtotal * neuroVms;
     final neuroPelec = (neuroPmech / 0.65) + 60.0;
-    final neuroIbatt = neuroPelec / batteryProfile.nominalVoltage;
-    final neuroCrate = neuroIbatt / batteryProfile.nominalCapacityAh;
-    final neuroAhTrip = neuroIbatt * (tripDurationMin / 60.0);
-    final neuroQlossPct = _interpolateBFactor(neuroCrate) *
-        math.exp(-_eaJPerMol / (_rGas * _tRefK)) *
-        math.pow(neuroAhTrip, _zExp);
-    final neuroEfc = (neuroQlossPct / qLossPerNominalCycle).clamp(0.0, 5.0);
-    final neuroPaceWearInr = neuroEfc * baseCostPerCycleInr;
+    final neuroDeltaEfc = (neuroPelec * (durationSeconds / 3600.0)) / batteryProfile.totalNominalEnergyWh;
+    final neuroPaceWearInr = (neuroDeltaEfc * 1.15) * baseCostPerCycleInr;
     final savedInr = math.max(0.0, predictedWearCostInr - neuroPaceWearInr);
 
     String mitigationText;
@@ -301,10 +303,9 @@ class PinnWearPrognosisEngine {
       cellCoreTempC: double.parse(cellCoreTempC.toStringAsFixed(1)),
       cellTempRiseK: double.parse(deltaTempK.toStringAsFixed(1)),
       arrheniusFactorPhiT: double.parse(phiT.toStringAsFixed(2)),
-      cRateOverpotentialFactorPsiC: double.parse(psiC.toStringAsFixed(2)),
-      lithiumPlatingMultiplier: double.parse(platingMultiplier.toStringAsFixed(1)),
-      totalStressMultiplierWf: double.parse(totalStressWf.toStringAsFixed(2)),
-      hasLithiumPlatingRisk: isPlating,
+      bFactorWang: bFactor,
+      ahThroughputAh: double.parse(ahTrip.toStringAsFixed(2)),
+      capacityLostMah: double.parse(capacityLostMah.toStringAsFixed(1)),
       predictedTripSohLossPct: double.parse(qLossPct.toStringAsFixed(4)),
       equivalentFullCyclesBurned: double.parse(equivalentCyclesBurned.toStringAsFixed(3)),
       predictedKneePointCycle: predictedKnee,
