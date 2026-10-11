@@ -474,9 +474,10 @@ The physics, electrochemistry, and telemetry models in this project are grounded
 <a id="team--institution"></a>
 ## 👥 Team & Institution
 
-* **Project:** FairLoad // VNS-Corridor
+* **Project:** FairLoad 
 * **Hackathon:** [SHIFT Hackathon 2026](https://github.com/suryansh00001/shift-2026-FNEYCB)
-* **Team:** **Ek Samosa Do Chai**
+* **Team:** **Ek_Samosa_Do_Chai**
+* **Team Members:** **Suryansh Garg (3rd year Civil) , Aryan Singh (3rd year Civil) , Shashwat Kumar Jha (3rd year Civil)**
 * **Institution:** Indian Institute of Technology (BHU) Varanasi
 * **Repository:** [`https://github.com/suryansh00001/shift-2026-FNEYCB`](https://github.com/suryansh00001/shift-2026-FNEYCB)
 
