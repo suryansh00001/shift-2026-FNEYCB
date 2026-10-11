@@ -1,0 +1,115 @@
+{
+  "input_shape": [
+    1,
+    17
+  ],
+  "output_shape": [
+    1,
+    1
+  ],
+  "normalization_formula": "x_norm = 2 * (x - min) / (max - min) - 1.0",
+  "features": [
+    {
+      "index": 0,
+      "name": "voltage_mean",
+      "min": 4.095312,
+      "max": 4.096621
+    },
+    {
+      "index": 1,
+      "name": "voltage_std",
+      "min": 0.056228,
+      "max": 0.057231
+    },
+    {
+      "index": 2,
+      "name": "voltage_kurtosis",
+      "min": -1.23243,
+      "max": -1.20464
+    },
+    {
+      "index": 3,
+      "name": "voltage_skewness",
+      "min": 0.015539,
+      "max": 0.032076
+    },
+    {
+      "index": 4,
+      "name": "cc_capacity_ah",
+      "min": 0.328,
+      "max": 0.35
+    },
+    {
+      "index": 5,
+      "name": "cc_charge_time_s",
+      "min": 294.720001,
+      "max": 315.059998
+    },
+    {
+      "index": 6,
+      "name": "voltage_slope",
+      "min": 0.000624,
+      "max": 0.000671
+    },
+    {
+      "index": 7,
+      "name": "voltage_entropy",
+      "min": 5.456354,
+      "max": 5.532888
+    },
+    {
+      "index": 8,
+      "name": "current_mean",
+      "min": 0.22127,
+      "max": 0.235179
+    },
+    {
+      "index": 9,
+      "name": "current_std",
+      "min": 0.106137,
+      "max": 0.112477
+    },
+    {
+      "index": 10,
+      "name": "current_kurtosis",
+      "min": -0.635098,
+      "max": -0.262555
+    },
+    {
+      "index": 11,
+      "name": "current_skewness",
+      "min": 0.729486,
+      "max": 0.892305
+    },
+    {
+      "index": 12,
+      "name": "cv_capacity_ah",
+      "min": 0.051,
+      "max": 0.086
+    },
+    {
+      "index": 13,
+      "name": "cv_charge_time_s",
+      "min": 789.299988,
+      "max": 1395.719971
+    },
+    {
+      "index": 14,
+      "name": "current_slope",
+      "min": -0.001152,
+      "max": -0.000751
+    },
+    {
+      "index": 15,
+      "name": "current_entropy",
+      "min": 6.294478,
+      "max": 6.837288
+    },
+    {
+      "index": 16,
+      "name": "cycle_index",
+      "min": 0.0,
+      "max": 374.0
+    }
+  ]
+}
